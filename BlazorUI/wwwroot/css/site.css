@@ -87,3 +87,9 @@ a, .btn-link {
     margin-right: 1rem;
 }
 /*End loader*/
+.mr-5 {
+    margin-right: 5px;
+}
+.ml-5 {
+    margin-left: 5px;
+}
