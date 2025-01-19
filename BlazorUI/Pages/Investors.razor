@@ -1,0 +1,251 @@
+﻿@page "/investors"
+@page "/investors/{InvestorId:int?}"
+@using ManageInvestors.Models
+@using BlazorUI.Services
+@using Models.DTOs
+@inject InvestorApiService InvestorService
+
+<PageTitle>Investors</PageTitle>
+
+<h1><span class="oi oi-person" aria-hidden="true"></span> Investors</h1>
+
+<p>This component gets data from a web API.</p>
+
+@if (!Completed)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @if (ErrorMessage is not null)
+    {
+        <div class="alert alert-warning" role="alert">
+            @ErrorMessage. <NavLink class="nav-link" href="investors">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Show All
+            </NavLink>
+        </div>
+    }
+
+    if (investor is not null)
+    {
+        <EditForm Model="@investor" OnValidSubmit="@HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <!-- First Name -->
+            <div class="form-group">
+                <label for="firstname">First Name</label>
+                <InputText id="firstname" class="form-control" @bind-Value="investor.Firstname" />
+            </div>
+
+            <!-- Last Name -->
+            <div class="form-group">
+                <label for="lastname">Last Name</label>
+                <InputText id="lastname" class="form-control" @bind-Value="investor.Lastname" />
+            </div>
+
+            <!-- Phone -->
+            <div class="form-group">
+                <label for="phone">Phone</label>
+                <InputText id="phone" class="form-control" @bind-Value="investor.Phone" />
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label for="email">Email</label>
+                <InputText id="email" class="form-control" @bind-Value="investor.Email" />
+            </div>
+
+            <!-- Address -->
+            <div class="form-group">
+                <label for="address">Address</label>
+                <InputText id="address" class="form-control" @bind-Value="investor.Address" />
+            </div>
+
+            <!-- Country -->
+            <div class="form-group">
+                <label for="country">Country</label>
+                <InputText id="country" class="form-control" @bind-Value="investor.Country" />
+            </div>
+
+            <!-- IsDeleted -->
+            <div class="form-check mb-3">
+                <InputCheckbox id="isdeleted" class="form-check-input" @bind-Value="investor.IsDeleted" />
+                <label class="form-check-label" for="isdeleted">Is Deleted</label>
+            </div>
+
+            <!-- Submit Button -->
+             <div class="row">
+                <div class="col-12">
+                    <button type="button" class="btn btn-outline-primary" @onclick="() => LoadDataAsync()">
+                        <span class="oi oi-chevron-left" aria-hidden="true"></span> Back
+                    </button>
+                    @if (investor.Id>0)
+                    {
+                        <button type="button" class="btn btn-danger" @onclick="() => DeleteConfirmation(false)">
+                            <span class="oi oi-trash" aria-hidden="true"></span> Soft Delete
+                        </button>
+                        <button type="button" class="btn btn-danger" @onclick="() => DeleteConfirmation(true)">
+                            <span class="oi oi-trash" aria-hidden="true"></span> Hard Delete
+                        </button>
+                        <NavLink href="@($"/investments/{investor.Id}")" class="btn btn-primary">
+                            <span class="oi oi-dollar" aria-hidden="true"></span> See Investments
+                        </NavLink>
+                    }
+                    <button type="submit" class="btn btn-primary">
+                        <span class="oi oi-check" aria-hidden="true"></span> Save Investor
+                    </button>
+                </div>
+            </div>
+        </EditForm>
+    }
+    else if (investors is not null)
+    {
+        <button class="btn btn-primary" @onclick="CreateInvestor"><span class="oi oi-plus" aria-hidden="true"></span> Add Investor</button>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Full Name</th>
+                    <th>Country</th>
+                    <th>Tot Investments</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var investor in investors)
+                {
+                    <tr>
+                        <td>@investor.Fullname</td>
+                        <td>@investor.Country</td>
+                        <td>@investor.Investments.Count</td>
+                        <td>
+                            <button class="btn btn-primary" type="button" @onclick="() => LoadInvestorData(investor.Id)"><span class="oi oi-pencil" aria-hidden="true"></span></button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+    [Parameter]
+    public EditContext EditContext { get; set; } = default!;
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? InvestorId { get; set; }
+
+    private List<InvestorDTO> investors { get; set; }
+    private InvestorDTO investor { get; set; }
+    public string ErrorMessage { get; set; }
+    public bool Completed { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        investors = null;
+        investor = null;
+        Completed = false;
+        if (!InvestorId.HasValue)
+        {
+            //var response = await InvestorService.GetInvestorsAsync();
+            var response = await InvestorService.GetInvestorsAndInvestmentsAsync();
+            Completed = response.Completed;
+
+            if (response.Success)
+            {
+                investors = response.Data;
+                ErrorMessage = null;
+            }
+            else
+            {
+                ErrorMessage = response.ErrorMessage;
+            }
+        }
+        else
+        {
+            await LoadInvestorData(InvestorId);
+        }
+    }
+
+    private async Task LoadInvestorData(int? Id)
+    {
+        //var response = await InvestorService.GetInvestorAsync(Id.Value);
+        var response = await InvestorService.GetInvestorAndInvestmentsAsync(Id.Value);
+        Completed = response.Completed;
+
+        if (response.Success)
+        {
+            investor = response.Data;
+            EditContext = new EditContext(investor);
+            ErrorMessage = null;
+        }
+        else
+        {
+            ErrorMessage = response.ErrorMessage;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        Console.WriteLine("Investor form submitted.");
+        ApiResponse<bool> response;
+        if (investor.Id == 0)
+        {
+            response = await InvestorService.CreateInvestorAsync(investor);
+        }
+        else
+        {
+            response = await InvestorService.UpdateInvestorAsync(investor);
+        }
+        Completed = response.Completed;
+
+        if (response.Success)
+        {
+            await LoadDataAsync();
+        }
+        else
+        {
+            ErrorMessage = response.ErrorMessage;
+        }
+    }
+
+    private void CreateInvestor()
+    {
+        investors = null;
+        Completed = true;
+        ErrorMessage = null;
+        investor = new InvestorDTO();
+        EditContext = new EditContext(investor);
+    }
+
+    #region Delete Investor
+
+    private async Task DeleteConfirmation(bool hardDelete)
+    {
+        if (investor is not null)
+        {
+            Console.WriteLine("Delete Investor.");
+            var response = await InvestorService.DeleteInvestorAsync(investor.Id, hardDelete);
+            Completed = response.Completed;
+
+            if (response.Success)
+            {
+                investor = null;
+                await LoadDataAsync();
+            }
+            else
+            {
+                ErrorMessage = response.ErrorMessage;
+            }
+        }
+    }
+
+    #endregion
+}
+

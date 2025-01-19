@@ -1,0 +1,239 @@
+﻿@page "/funds"
+@page "/funds/{FundId:int?}"
+@using ManageInvestors.Models
+@using BlazorUI.Services
+@inject FundApiService FundService
+
+<PageTitle>Funds</PageTitle>
+
+<h1><span class="oi oi-box" aria-hidden="true"></span> Funds</h1>
+
+<p>This component gets data from a web API.</p>
+
+@if (!Completed)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @if (ErrorMessage is not null)
+    {
+        <div class="alert alert-warning" role="alert">
+            @ErrorMessage. <NavLink class="nav-link" href="funds">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Show All
+            </NavLink>
+        </div>
+    }
+
+    if (fund is not null)
+    {
+        <EditForm Model="@fund" OnValidSubmit="@HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <!-- Fund Name -->
+            <div class="form-group">
+                <label for="fundName">Fund Name</label>
+                <InputText id="fundName" class="form-control" @bind-Value="fund.FundName" />
+            </div>
+
+            <!-- Provider Name -->
+            <div class="form-group">
+                <label for="lastname">Provider</label>
+                <InputText id="lastname" class="form-control" @bind-Value="fund.ProviderName" />
+            </div>
+
+            <!-- ISIN -->
+            <div class="form-group">
+                <label for="isin">ISIN</label>
+                <InputText id="isin" class="form-control" @bind-Value="fund.ISIN" />
+            </div>
+
+            <!-- Rating -->
+            <div class="form-group">
+                <label for="rating">Rating</label>
+                <InputNumber id="rating" class="form-control" @bind-Value="fund.Rating" />
+            </div>
+
+            <!-- FundDescription -->
+            <div class="form-group">
+                <label for="desc">Fund Description</label>
+                <InputText id="desc" class="form-control" @bind-Value="fund.FundDescription" />
+            </div>
+
+            <!-- Submit Button -->
+            <div class="row">
+                <div class="col-12">
+                    <button type="button" class="btn btn-outline-primary" @onclick="() => LoadDataAsync()">
+                        <span class="oi oi-chevron-left" aria-hidden="true"></span> Back
+                    </button>
+                    @if (fund.Id > 0)
+                    {
+                        <button type="button" class="btn btn-danger" @onclick="() => DeleteConfirmation(false)">
+                            <span class="oi oi-trash" aria-hidden="true"></span> Soft Delete
+                        </button>
+                        <button type="button" class="btn btn-danger" @onclick="() => DeleteConfirmation(true)">
+                            <span class="oi oi-trash" aria-hidden="true"></span> Hard Delete
+                        </button>
+                    }
+                    <button type="submit" class="btn btn-primary">
+                        <span class="oi oi-check" aria-hidden="true"></span> Save Fund
+                    </button>
+                </div>
+            </div>
+        </EditForm>
+    }
+    else if (funds is not null)
+    {
+        <button class="btn btn-primary" @onclick="CreateFund"><span class="oi oi-plus" aria-hidden="true"></span> Add Fund</button>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Fund Name</th>
+                    <th>Provider</th>
+                    <th>Rating</th>
+                    <th>ISIN</th>
+                    <th>Details</th>
+                    <th>Investors</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var fund in funds)
+                {
+                    <tr>
+                        <td>@fund.FundName</td>
+                        <td>@fund.ProviderName</td>
+                        <td>@fund.Rating</td>
+                        <td>@fund.ISIN</td>
+                        <td>
+                            <button class="btn btn-primary" type="button" @onclick="() => LoadFundData(fund.Id)"><span class="oi oi-pencil" aria-hidden="true"></span></button>
+                        </td>
+                        <td>
+                            <NavLink href="@($"/fund-investors/{fund.Id}")" class="btn btn-primary">
+                                <span class="oi oi-person" aria-hidden="true"></span> See Investors
+                            </NavLink>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+    [Parameter]
+    public EditContext EditContext { get; set; } = default!;
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? FundId { get; set; }
+
+    private List<FundDTO> funds { get; set; }
+    private FundDTO fund { get; set; }
+    public string ErrorMessage { get; set; }
+    public bool Completed { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        funds = null;
+        fund = null;
+        Completed = false;
+        if (!FundId.HasValue)
+        {
+            var response = await FundService.GetFundsAsync();
+            Completed = response.Completed;
+
+            if (response.Success)
+            {
+                funds = response.Data;
+                ErrorMessage = null;
+            }
+            else
+            {
+                ErrorMessage = response.ErrorMessage;
+            }
+        }
+        else
+        {
+            await LoadFundData(FundId);
+        }
+    }
+
+    private async Task LoadFundData(int? Id)
+    {
+        var response = await FundService.GetFundAsync(Id.Value);
+        Completed = response.Completed;
+
+        if (response.Success)
+        {
+            fund = response.Data;
+            EditContext = new EditContext(fund);
+            ErrorMessage = null;
+        }
+        else
+        {
+            ErrorMessage = response.ErrorMessage;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        Console.WriteLine("Fund form submitted.");
+        ApiResponse<FundDTO> response;
+        if (fund.Id == 0)
+        {
+            response = await FundService.CreateFundAsync(fund);
+        }
+        else
+        {
+            response = await FundService.UpdateFundAsync(fund);
+        }
+        Completed = response.Completed;
+
+        if (response.Success)
+        {
+            await LoadDataAsync();
+        }
+        else
+        {
+            ErrorMessage = response.ErrorMessage;
+        }
+    }
+
+    private void CreateFund()
+    {
+        funds = null;
+        Completed = true;
+        fund = new FundDTO();
+        EditContext = new EditContext(fund);
+    }
+
+    #region Delete Fund
+
+    private async Task DeleteConfirmation(bool hardDelete)
+    {
+        if (fund is not null)
+        {
+            Console.WriteLine("Delete Fund.");
+            var response = await FundService.DeleteFundAsync(fund.Id, hardDelete);
+            Completed = response.Completed;
+
+            if (response.Success)
+            {
+                fund = null;
+                await LoadDataAsync();
+            }
+            else
+            {
+                ErrorMessage = response.ErrorMessage;
+            }
+        }
+    }
+    #endregion
+}
+

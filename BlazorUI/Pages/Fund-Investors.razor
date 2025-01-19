@@ -1,0 +1,105 @@
+﻿@page "/fund-investors/{FundId:int?}"
+@using ManageInvestors.Models
+@using BlazorUI.Services
+@using Models.DTOs
+@inject InvestmentApiService InvestmentService
+@inject FundApiService FundService
+@inject InvestmentApiService InvestmentService
+
+<PageTitle>Investors per Fund</PageTitle>
+
+<h1><span class="oi oi-person" aria-hidden="true"></span> Investors per Fund</h1>
+
+<p>This component gets data from a web API.</p>
+
+@if (!Completed)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @if (ErrorMessage is not null)
+    {
+        <div class="alert alert-warning" role="alert">
+            @ErrorMessage. 
+        </div>
+    }
+
+    if (investors is not null)
+    {
+        <button class="btn btn-primary"><span class="oi oi-plus" aria-hidden="true"></span> Add Investment</button>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Full Name</th>
+                    <th>Country</th>
+                    <th>Quantity</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var investor in investors)
+                {
+                    <tr>
+                        <td>@investor.Fullname</td>
+                        <td>@investor.Country</td>
+                        <td>@investor.Investments.Sum(x=>x.Quantity)</td>
+                        <td>
+                            <NavLink href="@($"/investors/{investor.Id}")" class="btn btn-primary">
+                                <span class="oi oi-person" aria-hidden="true"></span> See Investor
+                            </NavLink>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? FundId { get; set; }
+
+    private List<InvestorDTO>? investors { get; set; }
+    public string? ErrorMessage { get; set; }
+    public bool Completed { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        investors = null;
+        Completed = false;
+        if (FundId.HasValue)
+        {
+            await LoadInvestmentData(FundId);
+        }
+        else
+        {
+            ErrorMessage = "No Investors associate to the current Fund";
+        }
+    }
+
+    private async Task LoadInvestmentData(int? Id)
+    {
+        var fund = await FundService.GetFundAsync(Id.Value);
+        var response = await FundService.GetAllInvestorsByFund(Id.Value, true);
+        Completed = response.Completed;
+
+        if (response.Success)
+        {
+            investors = response.Data;
+            ErrorMessage = null;
+        }
+        else
+        {
+            ErrorMessage = response.ErrorMessage;
+        }
+    }
+}
+

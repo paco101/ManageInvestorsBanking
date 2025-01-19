@@ -1,0 +1,324 @@
+﻿@page "/investments/{InvestorId:int?}"
+@using ManageInvestors.Models
+@using BlazorUI.Services
+@inject InvestmentApiService InvestmentService
+@inject FundApiService FundService
+@inject InvestmentApiService InvestmentService
+@inject InvestorApiService InvestorService
+
+<PageTitle>Investments</PageTitle>
+
+<h1><span class="oi oi-person" aria-hidden="true"></span> Investments</h1>
+
+<p>This component gets data from a web API.</p>
+
+@if (!Completed)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @if (ErrorMessage is not null)
+    {
+        <div class="alert alert-warning" role="alert">
+            @ErrorMessage.
+        </div>
+    }
+
+    if (investor is not null && investment is null)
+    {
+        <button class="btn btn-primary" @onclick="CreateInvestment"><span class="oi oi-plus" aria-hidden="true"></span> Add Investment</button>
+
+        <div class="row mt-4  mb-4">
+            <div class="col-6">
+                <!-- First Name -->
+                <div class="form-group">
+                    <label for="fullname">Full Name</label>
+                    <div id="fullname" class="form-control">@investor.Fullname</div>
+                </div>
+            </div>
+            <div class="col-6">
+                <!-- Phone -->
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <div id="phone" class="form-control">@investor.Phone</div>
+                </div>
+            </div>
+            <div class="col-6">
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <div id="email" class="form-control">@investor.Email</div>
+                </div>
+            </div>
+            <div class="col-6">
+                <!-- Country -->
+                <div class="form-group">
+                    <label for="country">Country</label>
+                    <div id="country" class="form-control">@investor.Country</div>
+                </div>
+            </div>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Fund Name</th>
+                    <th>ISIN</th>
+                    <th>Provider</th>
+                    <th>Rating</th>
+                    <th>Quantity</th>
+                    <th>Purchased On</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var investment in investor.Investments)
+                {
+                    <tr>
+                        <td>@investment.Fund.FundName</td>
+                        <td>@investment.Fund.ISIN</td>
+                        <td>@investment.Fund.ProviderName</td>
+                        <td>@investment.Fund.Rating</td>
+                        <td>@investment.Quantity</td>
+                        <td>@investment.TransactionDateTime?.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            <button class="btn btn-primary" type="button" @onclick="() => SelectInvestment(investment.Id)"><span class="oi oi-pencil" aria-hidden="true"></span></button>
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    if (investment is not null)
+    {
+        <EditForm Model="@investment" OnValidSubmit="@HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <!-- First Name -->
+            <div class="form-group">
+                <label for="quantity">Quantity</label>
+                <InputNumber id="quantity" class="form-control" @bind-Value="investment.Quantity" />
+            </div>
+
+            <!-- Last Name -->
+            <div class="form-group">
+                <label for="username">User Name</label>
+                <InputText id="username" class="form-control" @bind-Value="investment.UserTransaction" />
+            </div>
+
+
+            <!-- IsDeleted -->
+            <div class="form-check mb-3">
+                <InputCheckbox id="isdeleted" class="form-check-input" @bind-Value="investment.IsDeleted" />
+                <label class="form-check-label" for="isdeleted">Is Deleted</label>
+            </div>
+
+            @if (funds is not null)
+            {
+                <label for="fund">Select Fund</label>
+                <select id="fund" class="form-control" @bind="@investment.FundId">
+                    <option value="0">Select Fund</option>
+                    @foreach (var fund in funds)
+                    {
+                        <option value="@fund.Id">@fund.FundName</option>
+                    }
+                </select>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Fund Name</th>
+                            <th>Provider</th>
+                            <th>Rating</th>
+                            <th>ISIN</th>
+                            <th>Select</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var fund in funds)
+                        {
+                            <tr>
+                                <td>@fund.FundName</td>
+                                <td>@fund.ProviderName</td>
+                                <td>@fund.Rating</td>
+                                <td>@fund.ISIN</td>
+                                <td>
+                                    <button class="btn btn-primary" type="button" @onclick="() => SelectFund(fund.Id)"><span class="oi oi-pencil" aria-hidden="true"></span></button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+            <!-- Submit Button -->
+            <div class="row">
+                <div class="col-12">
+                    <button type="button" class="btn btn-outline-primary" @onclick="() => LoadDataAsync()">
+                        <span class="oi oi-chevron-left" aria-hidden="true"></span> Back
+                    </button>
+                    @if (investment.Id > 0)
+                    {
+                        <button type="button" class="btn btn-danger" @onclick="() => DeleteConfirmation(false)">
+                            <span class="oi oi-trash" aria-hidden="true"></span> Soft Delete
+                        </button>
+                        <button type="button" class="btn btn-danger" @onclick="() => DeleteConfirmation(true)">
+                            <span class="oi oi-trash" aria-hidden="true"></span> Hard Delete
+                        </button>
+                    }
+                    <button type="submit" class="btn btn-primary">
+                        <span class="oi oi-check" aria-hidden="true"></span> Save Investment
+                    </button>
+                </div>
+            </div>
+        </EditForm>
+    }
+}
+
+@code {
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? InvestorId { get; set; }
+
+    [Parameter]
+    public EditContext EditContext { get; set; } = default!;
+
+    private InvestorDTO investor { get; set; }
+    private List<FundDTO> funds { get; set; }
+    private List<InvestmentDTO> investments { get; set; }
+    private InvestmentDTO investment { get; set; }
+    public string ErrorMessage { get; set; }
+    public bool Completed { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        investment = null;
+        investor = null;
+        Completed = false;
+        if (InvestorId.HasValue)
+        {
+            var listfunds = await FundService.GetFundsAsync();
+            if (listfunds.Success)
+            {
+                funds = listfunds.Data;
+                await LoadInvestmentData(InvestorId);
+            }
+            else
+            {
+                ErrorMessage = listfunds.ErrorMessage;
+            }
+        }
+        else
+        {
+            ErrorMessage = "No Investors associate to the current Fund";
+        }
+    }
+
+    private async Task LoadInvestmentData(int? Id)
+    {
+        var response = await InvestorService.GetInvestorAndInvestmentsAsync(Id.Value);
+        Completed = response.Completed;
+
+        if (response.Success)
+        {
+            investor = response.Data;
+            ErrorMessage = null;
+        }
+        else
+        {
+            ErrorMessage = response.ErrorMessage;
+        }
+    }
+
+    private void CreateInvestment()
+    {
+        Completed = true;
+        ErrorMessage = null;
+        investment = new InvestmentDTO();
+        investment.InvestorId = investor.Id;
+        investment.TransactionDateTime = DateTime.Now;
+        EditContext = new EditContext(investment);
+    }
+
+    private void SelectFund(int fundId)
+    {
+        var fund = funds.FirstOrDefault(x => x.Id == fundId);
+        if (fund is not null)
+        {
+            investment.FundId = fund.Id;
+            investment.Fund = fund;
+        }
+    }
+
+    private void SelectInvestment(int investmentId)
+    {
+        investment = investor.Investments.FirstOrDefault(x => x.Id == investmentId);
+    }
+
+    #region Delete Investor
+
+    private async Task DeleteConfirmation(bool hardDelete)
+    {
+        if (investment is not null)
+        {
+            Console.WriteLine("Delete Investment.");
+            var response = await InvestmentService.DeleteInvestmentAsync(investment.Id, hardDelete);
+            Completed = response.Completed;
+
+            if (response.Success)
+            {
+                investment = null;
+                await LoadDataAsync();
+            }
+            else
+            {
+                ErrorMessage = response.ErrorMessage;
+            }
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        Console.WriteLine("Investment form submitted.");
+        ApiResponse<bool> response;
+        if (investment.FundId==0)
+        {
+            ErrorMessage = "Please select a Fund";
+            return;
+        }
+        if (investment.Id == 0)
+        {
+            response = await InvestmentService.CreateInvestmentAsync(investment);
+        }
+        else
+        {
+            response = await InvestmentService.UpdateInvestmentAsync(investment);
+        }
+        Completed = response.Completed;
+
+        if (response.Success)
+        {
+            investment = null;
+            ErrorMessage = null;
+            await LoadDataAsync();
+        }
+        else
+        {
+            ErrorMessage = response.ErrorMessage;
+        }
+    }
+
+
+    #endregion
+}
+

@@ -1,0 +1,6 @@
+@ManageInvestors_HostAddress = http://localhost:5155
+
+GET {{ManageInvestors_HostAddress}}/fund/
+Accept: application/json
+
+###

@@ -1,0 +1,23 @@
+﻿@inject IJSRuntime JSRuntime
+@inherits ConfirmBase
+
+@if(ShowConfirmation)
+{
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModal">@Title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="()=> OnConfirmed(false)"></button>
+            </div>
+            <div class="modal-body">
+                <p>@Message</p>
+            </div>
+            <div class="modal-footer">
+                    <button class="btn btn-danger" type="button" @onclick="()=> OnConfirmed(true)">Confirm</button>
+                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal" @onclick="()=> OnConfirmed(false)">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+}
