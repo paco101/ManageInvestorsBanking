@@ -11,5 +11,5 @@ public class InvestmentDTO
     public DateTime? TransactionDateTime { get; set; }
     public bool IsDeleted { get; set; } = false;
 
-    public  FundDTO Fund { get; set; }
+    public FundDTO Fund { get; set; }
 }

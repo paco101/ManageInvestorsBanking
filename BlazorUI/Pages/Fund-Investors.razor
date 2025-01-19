@@ -3,12 +3,12 @@
 @using BlazorUI.Services
 @using Models.DTOs
 @inject InvestmentApiService InvestmentService
-@inject FundApiService FundService
-@inject InvestmentApiService InvestmentService
+@inject IFundApiService FundService
+@inject IInvestmentApiService InvestmentService
 
 <PageTitle>Investors per Fund</PageTitle>
 
-<h1><span class="oi oi-person" aria-hidden="true"></span> Investors per Fund</h1>
+<h1><span class="oi oi-people" aria-hidden="true"></span> Investors per Fund</h1>
 
 <p>This component gets data from a web API.</p>
 
@@ -27,7 +27,6 @@ else
 
     if (investors is not null)
     {
-        <button class="btn btn-primary"><span class="oi oi-plus" aria-hidden="true"></span> Add Investment</button>
         <table class="table">
             <thead>
                 <tr>
@@ -53,6 +52,10 @@ else
                 }
             </tbody>
         </table>
+
+        <NavLink href="/funds" class="btn btn-primary">
+            <span class="oi oi-chevron-left" aria-hidden="true"></span> Back
+        </NavLink>
     }
 }
 
@@ -62,8 +65,8 @@ else
     [SupplyParameterFromQuery]
     public int? FundId { get; set; }
 
-    private List<InvestorDTO>? investors { get; set; }
-    public string? ErrorMessage { get; set; }
+    private List<InvestorDTO> investors { get; set; }
+    public string ErrorMessage { get; set; }
     public bool Completed { get; set; }
 
     protected override async Task OnParametersSetAsync()

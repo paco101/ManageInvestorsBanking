@@ -1,19 +1,12 @@
-﻿using System.Net;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using ManageInvestors.Models;
-using BlazorUI.Pages;
-using Models.DTOs;
+﻿using Models.DTOs;
+using System.Net;
 
 namespace BlazorUI.Services
 {
     /// <summary>
     /// Wraps response details in a generic ApiResponse<T> object.
     /// </summary>
-    public class InvestorApiService
+    public class InvestorApiService : IInvestorApiService
     {
         private readonly IHttpClientFactory _clientFactory;
         private const string ApiClientName = "InvestorApi"; // Same name used in Program.cs

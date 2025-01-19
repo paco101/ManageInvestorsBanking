@@ -3,6 +3,7 @@ using ManageInvestors.Models;
 using ManageInvestors.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Models.DTOs;
 
 namespace InvestorManagementApi.Controllers
 {
@@ -19,7 +20,7 @@ namespace InvestorManagementApi.Controllers
 
         // Add fund to investor (create new Investment)
         [HttpPost]
-        public async Task<ActionResult<Investment>> CreateInvestment([FromBody] Investment newInvestment, CancellationToken cancellationToken)
+        public async Task<ActionResult<InvestmentDTO>> CreateInvestment([FromBody] InvestmentDTO newInvestment, CancellationToken cancellationToken)
         {
             var created = await _investmentService.CreateInvestmentAsync(newInvestment, cancellationToken);
             return CreatedAtAction(nameof(GetInvestment), new { id = created.Id }, created);
@@ -27,8 +28,8 @@ namespace InvestorManagementApi.Controllers
 
         // 5. Update a Investment
         [HttpPut("{id}")]
-        public async Task<ActionResult<Investment>> UpdateInvestment(
-            [FromBody] Investment investment,
+        public async Task<ActionResult<InvestmentDTO>> UpdateInvestment(
+            [FromBody] InvestmentDTO investment,
             CancellationToken cancellationToken)
         {
             var updatedInvestment = await _investmentService.UpdateInvestmentAsync(investment, cancellationToken);

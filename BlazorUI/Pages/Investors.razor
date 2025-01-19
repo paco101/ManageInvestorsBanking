@@ -3,7 +3,8 @@
 @using ManageInvestors.Models
 @using BlazorUI.Services
 @using Models.DTOs
-@inject InvestorApiService InvestorService
+@inject IInvestorApiService InvestorService
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Investors</PageTitle>
 
@@ -75,24 +76,27 @@ else
             </div>
 
             <!-- Submit Button -->
-             <div class="row">
+            <div class="row mt-3">
                 <div class="col-12">
-                    <button type="button" class="btn btn-outline-primary" @onclick="() => LoadDataAsync()">
-                        <span class="oi oi-chevron-left" aria-hidden="true"></span> Back
-                    </button>
+                    @if (!InvestorId.HasValue)
+                    {
+                        <button type="button" class="btn btn-outline-primary mr-5" @onclick="() => LoadDataAsync()">
+                            <span class="oi oi-chevron-left" aria-hidden="true"></span> Back
+                        </button>
+                    }
                     @if (investor.Id>0)
                     {
-                        <button type="button" class="btn btn-danger" @onclick="() => DeleteConfirmation(false)">
+                        <button type="button" class="btn btn-outline-danger" @onclick="() => ConfirmDelete(false)">
                             <span class="oi oi-trash" aria-hidden="true"></span> Soft Delete
                         </button>
-                        <button type="button" class="btn btn-danger" @onclick="() => DeleteConfirmation(true)">
+                        <button type="button" class="btn btn-outline-danger" @onclick="() => ConfirmDelete(true)">
                             <span class="oi oi-trash" aria-hidden="true"></span> Hard Delete
                         </button>
                         <NavLink href="@($"/investments/{investor.Id}")" class="btn btn-primary">
-                            <span class="oi oi-dollar" aria-hidden="true"></span> See Investments
+                            <span class="oi oi-graph" aria-hidden="true"></span> See Investments
                         </NavLink>
                     }
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-success ml-5">
                         <span class="oi oi-check" aria-hidden="true"></span> Save Investor
                     </button>
                 </div>
@@ -226,7 +230,22 @@ else
 
     #region Delete Investor
 
-    private async Task DeleteConfirmation(bool hardDelete)
+    private async Task ConfirmDelete(bool hardDelete)
+    {
+        bool isConfirmed = await JSRuntime.InvokeAsync<bool>(
+            "showSweetAlert", 
+            "Do you want to remove this Investor?",
+            "You won't be able to revert this!");
+
+        // Handle the result
+        if (isConfirmed)
+        {
+            ErrorMessage = "Item deleted successfully!";
+            await DeleteConfirmed(hardDelete); // Call your delete logic here
+        }
+    }
+
+    private async Task DeleteConfirmed(bool hardDelete)
     {
         if (investor is not null)
         {

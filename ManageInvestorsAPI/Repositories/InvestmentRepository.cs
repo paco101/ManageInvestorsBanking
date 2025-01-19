@@ -1,5 +1,6 @@
 ﻿using ManageInvestors.DataLayer;
 using ManageInvestors.Models;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace ManageInvestors.Repositories
@@ -24,14 +25,46 @@ namespace ManageInvestors.Repositories
         public async Task<Investment> CreateInvestmentAsync(Investment investment, CancellationToken cancellationToken)
         {
             _context.Investments.Add(investment);
-            await _context.SaveChangesAsync(cancellationToken);
+            
+
+            try
+            {
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine($"Exception: {ex.Message}");
+
+                if (ex.InnerException is SqlException sqlEx)
+                {
+                    Console.WriteLine($"SQL Error: {sqlEx.Message}");
+                    // Inspect query if available
+                }
+
+                throw; // Re-throw the exception if needed
+            }
             return investment;
         }
 
         public async Task<Investment> UpdateInvestmentAsync(Investment investment, CancellationToken cancellationToken)
         {
             _context.Investments.Update(investment);
-            await _context.SaveChangesAsync(cancellationToken);
+            try
+            {
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine($"Exception: {ex.Message}");
+
+                if (ex.InnerException is SqlException sqlEx)
+                {
+                    Console.WriteLine($"SQL Error: {sqlEx.Message}");
+                    // Inspect query if available
+                }
+
+                throw; // Re-throw the exception if needed
+            }
             return investment;
         }
 

@@ -1,8 +1,5 @@
 using Blazored.Modal;
 using BlazorUI.Services;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -19,9 +16,9 @@ services.AddHttpClient("InvestorApi", client =>
 });
 
 // Repositories
-services.AddScoped<InvestorApiService>();
-builder.Services.AddScoped<FundApiService>();
-builder.Services.AddScoped<InvestmentApiService>();
+services.AddScoped<IInvestorApiService, InvestorApiService>();
+services.AddScoped<IFundApiService, FundApiService>();
+services.AddScoped<IInvestmentApiService, InvestmentApiService>();
 
 // Add services to the container.
 services.AddRazorPages();

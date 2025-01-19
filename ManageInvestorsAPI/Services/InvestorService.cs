@@ -59,7 +59,6 @@ namespace ManageInvestors.Services
 
         public async Task<Investor> CreateInvestorAsync(Investor investor, CancellationToken cancellationToken)
         {
-            // e.g., validate investor fields, check duplicates, etc.
             return await _investorRepository.CreateInvestorAsync(investor, cancellationToken);
         }
 
