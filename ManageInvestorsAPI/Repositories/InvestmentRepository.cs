@@ -16,7 +16,7 @@ namespace ManageInvestors.Repositories
 
         public async Task<Investment> GetInvestmentAsync(int id, CancellationToken cancellationToken)
         {
-            return await _context.Investments
+            return await _context.Investments.AsNoTracking()
                 .Include(i => i.Fund)
                 .Include(i => i.Investor)
                 .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);

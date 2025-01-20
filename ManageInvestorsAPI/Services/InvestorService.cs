@@ -64,7 +64,8 @@ namespace ManageInvestors.Services
 
         public async Task<InvestorDTO> UpdateInvestorAsync(InvestorDTO investor, CancellationToken cancellationToken)
         {
-            var invest = await _investorRepository.UpdateInvestorAsync(_mapper.Map<Investor>(investor), cancellationToken);
+            var inv = _mapper.Map<Investor>(investor);
+            var invest = await _investorRepository.UpdateInvestorAsync(inv, cancellationToken);
             return _mapper.Map<InvestorDTO>(invest);
         }
 

@@ -167,7 +167,7 @@ namespace BlazorUI.Services
         {
             var httpClient = _clientFactory.CreateClient(ApiClientName);
             var apiResponse = new ApiResponse<bool>();
-            var url = hardDelete ? $"api/fund/{id}/hard-delete" : $"api/fund/{id}";
+            var url = hardDelete ? $"api/fund/{id}" : $"api/fund/{id}/soft-delete";
             var response = await httpClient.DeleteAsync(url, cancellationToken);
             apiResponse.StatusCode = response.StatusCode;
             apiResponse.Success = response.IsSuccessStatusCode;

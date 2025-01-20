@@ -80,6 +80,7 @@ namespace ManageInvestors.Controllers
             [FromBody] InvestorDTO investor,
             CancellationToken cancellationToken)
         {
+            investor.Investments = null;
             var updatedInvestor = await _investorService.UpdateInvestorAsync(investor, cancellationToken);
 
             if (updatedInvestor == null)
@@ -89,7 +90,7 @@ namespace ManageInvestors.Controllers
         }
 
         // 6. Soft Delete an investor (example: “Nyssa Barr”)
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}/soft-delete")]
         public async Task<ActionResult<bool>> SoftDeleteInvestor(int id, CancellationToken cancellationToken)
         {
             var investor = await _investorService.GetInvestorAsync(id, cancellationToken);
@@ -98,7 +99,7 @@ namespace ManageInvestors.Controllers
                 return NotFound(false);
 
             investor.IsDeleted = true;
-
+            investor.Investments = null;
             var updatedInvestor = await _investorService.UpdateInvestorAsync(investor, cancellationToken);
 
             if (updatedInvestor == null)
@@ -108,7 +109,7 @@ namespace ManageInvestors.Controllers
         }
 
         // 7. Hard Delete an investor (example: “Nyssa Barr”)
-        [HttpDelete("{id}/hard-delete")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> DeleteInvestor(int id, CancellationToken cancellationToken)
         {
             var investor = await _investorService.GetInvestorAsync(id, cancellationToken);

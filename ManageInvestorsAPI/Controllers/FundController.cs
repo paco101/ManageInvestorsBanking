@@ -78,7 +78,7 @@ namespace ManageInvestors.Controllers
         }
 
         // 6. Delete a Fund 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}/soft-delete")]
         public async Task<ActionResult<bool>> DeleteFund(int id, CancellationToken cancellationToken)
         {
             var fund = await _fundService.GetFundByIdAsync(id, cancellationToken);
@@ -87,7 +87,7 @@ namespace ManageInvestors.Controllers
 
 
             fund.IsDeleted = true;
-
+            fund.Investments = null;
             var updatedFund = await _fundService.UpdateFundAsync(fund, cancellationToken);
 
             if (updatedFund == null)
@@ -97,7 +97,7 @@ namespace ManageInvestors.Controllers
         }
 
         // 7. Hard Delete an investor (example: “Nyssa Barr”)
-        [HttpDelete("{id}/hard-delete")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> DeleteInvestor(int id, CancellationToken cancellationToken)
         {
             var fund = await _fundService.GetFundByIdAsync(id, cancellationToken);

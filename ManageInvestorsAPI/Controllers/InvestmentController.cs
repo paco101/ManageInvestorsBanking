@@ -51,7 +51,7 @@ namespace InvestorManagementApi.Controllers
         }
 
         // 6. Soft Delete an investment (example: “Nyssa Barr”)
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}/soft-delete")]
         public async Task<ActionResult<bool>> SoftDeleteInvestment(int id, CancellationToken cancellationToken)
         {
             var investor = await _investmentService.GetInvestmentAsync(id, cancellationToken);
@@ -60,7 +60,6 @@ namespace InvestorManagementApi.Controllers
                 return NotFound(false);
 
             investor.IsDeleted = true;
-
             var updatedInvestor = await _investmentService.UpdateInvestmentAsync(investor, cancellationToken);
 
             if (updatedInvestor == null)
@@ -70,7 +69,7 @@ namespace InvestorManagementApi.Controllers
         }
 
         // 7. Hard Delete an investment (example: “Nyssa Barr”)
-        [HttpDelete("{id}/hard-delete")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> DeleteInvestment(int id, CancellationToken cancellationToken)
         {
             var investor = await _investmentService.GetInvestmentAsync(id, cancellationToken);

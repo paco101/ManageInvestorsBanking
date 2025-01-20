@@ -1,5 +1,6 @@
 ﻿using ManageInvestors.DataLayer;
 using ManageInvestors.Models;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace ManageInvestors.Repositories
@@ -22,14 +23,14 @@ namespace ManageInvestors.Repositories
 
         public async Task<List<Investor>> GetAllInvestorsAsync(CancellationToken cancellationToken)
         {
-            return await _context.Investors
+            return await _context.Investors.AsNoTracking()
                 //.Include(i => i.Investments)
                 .ToListAsync(cancellationToken);
         }
 
         public async Task<List<Investor>> GetAllInvestorsByAdminAsync(CancellationToken cancellationToken)
         {
-            return await _context.Investors
+            return await _context.Investors.AsNoTracking()
                 .Include(i => i.Investments)
                 .IgnoreQueryFilters()
                 .ToListAsync(cancellationToken);
@@ -37,7 +38,7 @@ namespace ManageInvestors.Repositories
 
         public async Task<List<Investor>> GetAllInvestorsAndInvestmentsAsync(CancellationToken cancellationToken)
         {
-            return await _context.Investors
+            return await _context.Investors.AsNoTracking()
                 .Include(i => i.Investments)
                 .ThenInclude(inv => inv.Fund)
                 .ToListAsync(cancellationToken);
@@ -45,7 +46,7 @@ namespace ManageInvestors.Repositories
 
         public async Task<Investor> GetInvestorAndInvestmentsAsync(int id, CancellationToken cancellationToken)
         {
-            return await _context.Investors
+            return await _context.Investors.AsNoTracking()
                 .Where(i => i.Id == id)
                 .Include(i => i.Investments)
                 .ThenInclude(inv => inv.Fund)
@@ -54,7 +55,7 @@ namespace ManageInvestors.Repositories
 
         public async Task<List<Investor>> GetAllInvestorsByFundIdAsync(int fundId, CancellationToken cancellationToken)
         {
-            return await _context.Investments
+            return await _context.Investments.AsNoTracking()
                 .Where(inv => inv.FundId == fundId)
                 .Select(inv => inv.Investor)
                 .ToListAsync(cancellationToken);
@@ -62,7 +63,7 @@ namespace ManageInvestors.Repositories
 
         public async Task<List<Investor>> GetInvestorsAndInvestmentsByFundIdAsync(int fundId, CancellationToken cancellationToken)
         {        
-            return await _context.Investments
+            return await _context.Investments.AsNoTracking()
                 .Where(inv => inv.FundId == fundId)
                 .Include(i => i.Investor)    
                 .Select(inv => inv.Investor)
@@ -77,8 +78,25 @@ namespace ManageInvestors.Repositories
         }
         public async Task<Investor> UpdateInvestorAsync(Investor investor, CancellationToken cancellationToken)
         {
-            _context.Investors.Update(investor);
-            await _context.SaveChangesAsync(cancellationToken);
+            
+            try
+            {
+                _context.Investors.Update(investor);
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine($"Exception: {ex.Message}");
+
+                if (ex.InnerException is SqlException sqlEx)
+                {
+                    Console.WriteLine($"SQL Error: {sqlEx.Message}");
+                    // Inspect query if available
+                }
+
+                throw; // Re-throw the exception if needed
+            }
+            //await _context.SaveChangesAsync(cancellationToken);
             return investor;
         }
 

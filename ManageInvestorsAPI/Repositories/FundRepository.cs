@@ -15,13 +15,13 @@ namespace ManageInvestors.Repositories
 
         public async Task<List<Fund>> GetAllFundsAsync(CancellationToken cancellationToken)
         {
-            return await _context.Funds
+            return await _context.Funds.AsNoTracking()
                 .ToListAsync(cancellationToken);
         }
 
         public async Task<List<Fund>> GetAllFundsByAdminAsync(CancellationToken cancellationToken)
         {
-            return await _context.Funds.IgnoreQueryFilters().ToListAsync(cancellationToken);
+            return await _context.Funds.AsNoTracking().IgnoreQueryFilters().ToListAsync(cancellationToken);
         }
 
         public async Task<Fund> GetFundByIdAsync(int id, CancellationToken cancellationToken)
@@ -31,7 +31,7 @@ namespace ManageInvestors.Repositories
 
         public async Task<List<Fund>> GetAllFundsByInvestorAsync(int investorId, CancellationToken cancellationToken)
         {
-            return await _context.Investments
+            return await _context.Investments.AsNoTracking()
                 .Where(inv => inv.InvestorId == investorId)
                 .Select(inv => inv.Fund)
                 .ToListAsync(cancellationToken);
