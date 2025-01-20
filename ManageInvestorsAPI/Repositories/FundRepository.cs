@@ -26,7 +26,8 @@ namespace ManageInvestors.Repositories
 
         public async Task<Fund> GetFundByIdAsync(int id, CancellationToken cancellationToken)
         {
-            return await _context.Funds.FindAsync(id, cancellationToken);
+            return await _context.Funds.AsNoTracking()
+                .FirstOrDefaultAsync(f => f.Id == id, cancellationToken);
         }
 
         public async Task<List<Fund>> GetAllFundsByInvestorAsync(int investorId, CancellationToken cancellationToken)

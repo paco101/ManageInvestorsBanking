@@ -24,8 +24,7 @@ namespace ManageInvestors.Repositories
 
         public async Task<Investment> CreateInvestmentAsync(Investment investment, CancellationToken cancellationToken)
         {
-            _context.Investments.Add(investment);
-            
+            _context.Investments.Add(investment);          
 
             try
             {

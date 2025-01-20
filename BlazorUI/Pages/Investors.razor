@@ -86,6 +86,9 @@ else
                     }
                     @if (investor.Id>0)
                     {
+                        <button type="button" class="btn btn-outline-danger" @onclick="() => ConfirmDelete(false)">
+                            <span class="oi oi-trash" aria-hidden="true"></span> Soft Delete
+                        </button>
                         <button type="button" class="btn btn-outline-danger" @onclick="() => ConfirmDelete(true)">
                             <span class="oi oi-trash" aria-hidden="true"></span> Hard Delete
                         </button>
