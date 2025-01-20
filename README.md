@@ -1,7 +1,7 @@
 <h1>Blazor Investment Management</h1>
 <p>
 This project is a Blazor application for managing investments, funds, and investors. It interacts with a web API to perform CRUD operations and display data in a user-friendly interface.</p>
-Features
+<h6>Features</h6>
 <ul>
 <li>View, create, update, and delete investments.</li>
 <li>View and manage funds.</li>
@@ -9,17 +9,18 @@ Features
 <li>Responsive UI built with Blazor.</li>
 <li>Data validation and error handling.</li>
 </ul>
-Prerequisites
+<hr/>
+<h6>Prerequisites</h6>
 <ul>
 <li>.NET 9 SDK</li>
 <li>Visual Studio 2022 or later with Blazor support.</li>
 </ul>
-Getting Started
+<h6>Getting Started</h6>
 1.	Clone the repository:
     git clone https://github.com/your-repo/blazor-investment-management.git
     cd blazor-investment-management
 
-Project Structure
+<h6>Project Structure</h6>
 <ul>
 <li>BlazorUI: Contains the Blazor components and pages.</li>
 <li>Pages: Razor components for different pages like Investments.razor.</li>
@@ -29,14 +30,14 @@ Project Structure
 <li>DTOs: DTO classes like FundDTO, InvestmentDTO, and InvestorDTO.</li>
 </ul>
 
-Key Files
+<h6>Key Files</h6>
 
 <ul>
 <li>BlazorUI/Pages/Investments.razor: The main page for managing investments.</li>
 <li>BlazorUI/Services/FundApiService.cs: Service class for interacting with the fund-related API endpoints.</li>
 <li>BlazorUI/Services/IFundApiService.cs: Interface for FundApiService.</li>
 </ul>
-API Endpoints
+<h6>API Endpoints</h6>
 The application interacts with the following API endpoints:
 <ul>
 <li>GET api/fund: Retrieves all funds.</li>
@@ -46,7 +47,7 @@ The application interacts with the following API endpoints:
 <li>DELETE api/fund/{id}: Deletes a fund by ID.</li>
 </ul>
 
-Screenshoots
+<h6>Screenshoots</h6>
 
 ![image](https://github.com/user-attachments/assets/e87e8aa9-6a89-4d71-8c06-57271b962f80)
 Funds Page ->
