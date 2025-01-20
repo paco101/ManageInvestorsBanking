@@ -15,10 +15,6 @@ This project is a Blazor application for managing investments, funds, and invest
 <li>.NET 9 SDK</li>
 <li>Visual Studio 2022 or later with Blazor support.</li>
 </ul>
-<h6>Getting Started</h6>
-1.	Clone the repository:
-    git clone https://github.com/your-repo/blazor-investment-management.git
-    cd blazor-investment-management
 <hr/>
 <h6>Project Structure</h6>
 <ul>
@@ -48,6 +44,11 @@ The application interacts with the following API endpoints:
 <li>DELETE api/fund/{id}: Deletes a fund by ID.</li>
 </ul>
 <hr/>
+<h6>Getting Started</h6>
+1.	Clone the repository:
+    git clone https://github.com/your-repo/blazor-investment-management.git
+    cd blazor-investment-management
+ <hr/>   
 <h6>Screenshoots</h6>
 
 ![image](https://github.com/user-attachments/assets/e87e8aa9-6a89-4d71-8c06-57271b962f80)
