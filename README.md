@@ -1,7 +1,7 @@
 <h1>Blazor Investment Management</h1>
 <p>
 This project is a Blazor application for managing investments, funds, and investors. It interacts with a web API to perform CRUD operations and display data in a user-friendly interface.</p>
-<h6>Features</h6>
+<h5>Features</h5>
 <ul>
 <li>View, create, update, and delete investments.</li>
 <li>View and manage funds.</li>
@@ -10,13 +10,13 @@ This project is a Blazor application for managing investments, funds, and invest
 <li>Data validation and error handling.</li>
 </ul>
 <hr/>
-<h6>Prerequisites</h6>
+<h5>Prerequisites</h5>
 <ul>
 <li>.NET 9 SDK</li>
 <li>Visual Studio 2022 or later with Blazor support.</li>
 </ul>
 <hr/>
-<h6>Project Structure</h6>
+<h5>Project Structure</h5>
 <ul>
 <li>BlazorUI: Contains the Blazor components and pages.</li>
 <li>Pages: Razor components for different pages like Investments.razor.</li>
@@ -26,7 +26,7 @@ This project is a Blazor application for managing investments, funds, and invest
 <li>DTOs: DTO classes like FundDTO, InvestmentDTO, and InvestorDTO.</li>
 </ul>
 <hr/>
-<h6>Key Files</h6>
+<h5>Key Files</h5>
 
 <ul>
 <li>BlazorUI/Pages/Investments.razor: The main page for managing investments.</li>
@@ -34,7 +34,7 @@ This project is a Blazor application for managing investments, funds, and invest
 <li>BlazorUI/Services/IFundApiService.cs: Interface for FundApiService.</li>
 </ul>
 <hr/>
-<h6>API Endpoints</h6>
+<h5>API Endpoints</h5>
 The application interacts with the following API endpoints:
 <ul>
 <li>GET api/fund: Retrieves all funds.</li>
@@ -44,12 +44,12 @@ The application interacts with the following API endpoints:
 <li>DELETE api/fund/{id}: Deletes a fund by ID.</li>
 </ul>
 <hr/>
-<h6>Getting Started</h6>
+<h5>Getting Started</h5>
 1.	Clone the repository:
     git clone https://github.com/your-repo/blazor-investment-management.git
     cd blazor-investment-management
  <hr/>   
-<h6>Screenshoots</h6>
+<h5>Screenshoots</h5>
 
 ![image](https://github.com/user-attachments/assets/e87e8aa9-6a89-4d71-8c06-57271b962f80)
 Funds Page ->
