@@ -19,7 +19,7 @@ This project is a Blazor application for managing investments, funds, and invest
 1.	Clone the repository:
     git clone https://github.com/your-repo/blazor-investment-management.git
     cd blazor-investment-management
-
+<hr/>
 <h6>Project Structure</h6>
 <ul>
 <li>BlazorUI: Contains the Blazor components and pages.</li>
@@ -29,7 +29,7 @@ This project is a Blazor application for managing investments, funds, and invest
 <li>Models: Contains the data transfer objects (DTOs) used in the application.</li>
 <li>DTOs: DTO classes like FundDTO, InvestmentDTO, and InvestorDTO.</li>
 </ul>
-
+<hr/>
 <h6>Key Files</h6>
 
 <ul>
@@ -37,6 +37,7 @@ This project is a Blazor application for managing investments, funds, and invest
 <li>BlazorUI/Services/FundApiService.cs: Service class for interacting with the fund-related API endpoints.</li>
 <li>BlazorUI/Services/IFundApiService.cs: Interface for FundApiService.</li>
 </ul>
+<hr/>
 <h6>API Endpoints</h6>
 The application interacts with the following API endpoints:
 <ul>
@@ -46,7 +47,7 @@ The application interacts with the following API endpoints:
 <li>PUT api/fund/{id}: Updates an existing fund.</li>
 <li>DELETE api/fund/{id}: Deletes a fund by ID.</li>
 </ul>
-
+<hr/>
 <h6>Screenshoots</h6>
 
 ![image](https://github.com/user-attachments/assets/e87e8aa9-6a89-4d71-8c06-57271b962f80)
