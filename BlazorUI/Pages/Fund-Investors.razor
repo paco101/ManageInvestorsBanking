@@ -27,6 +27,23 @@ else
 
     if (investors is not null)
     {
+        <div class="row mt-4 mb-4">
+            <div class="col-6">
+                <!-- Fund Name -->
+                <div class="form-group">
+                    <label for="fundname">Fund Name</label>
+                    <div id="fundname" class="form-control">@fund.FundName @fund.ProviderName</div>
+                </div>
+            </div>
+            <div class="col-6">
+                <!-- Provider -->
+                <div class="form-group">
+                    <label for="provider">ISIN</label>
+                    <div id="provider" class="form-control">@fund.ISIN</div>
+                </div>
+            </div>
+        </div>
+
         <table class="table">
             <thead>
                 <tr>
@@ -53,8 +70,8 @@ else
             </tbody>
         </table>
 
-        <NavLink href="/funds" class="btn btn-primary">
-            <span class="oi oi-chevron-left" aria-hidden="true"></span> Back
+        <NavLink href="/funds" class="btn btn-outline-primary">
+            <span class="oi oi-chevron-left" aria-hidden="true"></span> Back to Funds
         </NavLink>
     }
 }
@@ -64,7 +81,7 @@ else
     [Parameter]
     [SupplyParameterFromQuery]
     public int? FundId { get; set; }
-
+    private FundDTO fund { get; set; }
     private List<InvestorDTO> investors { get; set; }
     public string ErrorMessage { get; set; }
     public bool Completed { get; set; }
@@ -80,7 +97,12 @@ else
         Completed = false;
         if (FundId.HasValue)
         {
-            await LoadInvestmentData(FundId);
+            var responseFund = await FundService.GetFundAsync(FundId.Value);
+            if (responseFund.Success)
+            {
+                fund = responseFund.Data;
+                await LoadInvestmentData(FundId);
+            }
         }
         else
         {
@@ -90,7 +112,6 @@ else
 
     private async Task LoadInvestmentData(int? Id)
     {
-        var fund = await FundService.GetFundAsync(Id.Value);
         var response = await FundService.GetAllInvestorsByFund(Id.Value, true);
         Completed = response.Completed;
 
