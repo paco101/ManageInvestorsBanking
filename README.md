@@ -1,5 +1,6 @@
 <h1>Blazor Investment Management</h1>
-This project is a Blazor application for managing investments, funds, and investors. It interacts with a web API to perform CRUD operations and display data in a user-friendly interface.
+<p>
+This project is a Blazor application for managing investments, funds, and investors. It interacts with a web API to perform CRUD operations and display data in a user-friendly interface.</p>
 Features
 <ul>
 <li>View, create, update, and delete investments.</li>
@@ -29,6 +30,7 @@ Project Structure
 </ul>
 
 Key Files
+
 <ul>
 <li>BlazorUI/Pages/Investments.razor: The main page for managing investments.</li>
 <li>BlazorUI/Services/FundApiService.cs: Service class for interacting with the fund-related API endpoints.</li>
@@ -37,11 +39,11 @@ Key Files
 API Endpoints
 The application interacts with the following API endpoints:
 <ul>
-•	GET api/fund: Retrieves all funds.
-•	GET api/fund/{id}: Retrieves a single fund by ID.
-•	POST api/fund: Creates a new fund.
-•	PUT api/fund/{id}: Updates an existing fund.
-•	DELETE api/fund/{id}: Deletes a fund by ID.
+<li>GET api/fund: Retrieves all funds.</li>
+<li>GET api/fund/{id}: Retrieves a single fund by ID.</li>
+<li>POST api/fund: Creates a new fund.</li>
+<li>PUT api/fund/{id}: Updates an existing fund.</li>
+<li>DELETE api/fund/{id}: Deletes a fund by ID.</li>
 </ul>
 
 Screenshoots
