@@ -113,6 +113,7 @@ else
                     <th>Country</th>
                     <th>Tot Investments</th>
                     <th>Details</th>
+                    <th>Investments</th>
                 </tr>
             </thead>
             <tbody>
@@ -124,6 +125,11 @@ else
                         <td>@investor.Investments.Count</td>
                         <td>
                             <button class="btn btn-primary" type="button" @onclick="() => LoadInvestorData(investor.Id)"><span class="oi oi-pencil" aria-hidden="true"></span></button>
+                        </td>
+                        <td>
+                            <NavLink href="@($"/investments/{@investor.Id}")" class="btn btn-primary">
+                                <span class="oi oi-graph" aria-hidden="true"></span> Investments
+                            </NavLink>
                         </td>
                     </tr>
                 }
